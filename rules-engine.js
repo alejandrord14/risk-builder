@@ -31,9 +31,30 @@ function estimatePd(company) {
   return 0.02 + riskScore * 0.30;
 }
 
+// Qué tan lejos está una empresa de cruzar cada umbral configurado, para
+// usarse como proxy de confianza: casos "al límite" son menos confiables
+// que casos claramente dentro o fuera de rango.
+function estimateConfidence(company, rules) {
+  const marginUtilizacion = Math.abs(company.utilization - rules.utilizacionMaxima) / 100;
+  const marginMora = Math.abs(company.days_late - rules.diasMora) / 90;
+  const marginConcentracion = Math.abs(company.concentration - rules.concentracionGasto) / 100;
+  const marginAntiguedad = Math.abs(company.months_active - rules.antiguedadMinima) / 42;
+  const avgMargin = (marginUtilizacion + marginMora + marginConcentracion + marginAntiguedad) / 4;
+
+  let confidence = 55 + avgMargin * 90;
+
+  if (!company.bureau_available) confidence -= 15;
+  if (company.identity_signal === 'alerta') confidence -= 10;
+  if (company.fraud_alert === 'alta') confidence -= 10;
+  else if (company.fraud_alert === 'media') confidence -= 5;
+
+  return Math.max(45, Math.min(99, Math.round(confidence)));
+}
+
 function evaluateCompany(company, rules) {
   let status = 'aprobado';
   let limitMultiplier = 1;
+  const reasons = [];
 
   const escalate = (level) => {
     if (level === 'rechazado') status = 'rechazado';
@@ -42,25 +63,55 @@ function evaluateCompany(company, rules) {
 
   if (company.months_active < rules.antiguedadMinima) {
     escalate('rechazado');
+    reasons.push(`su antigüedad de ${company.months_active} meses está por debajo del mínimo exigido de ${rules.antiguedadMinima} meses`);
   }
 
   if (company.fraud_alert !== 'ninguna') {
-    if (rules.accionFraude === 'bloquear') escalate('rechazado');
-    else if (rules.accionFraude === 'verificacion') escalate('revision');
-    else if (rules.accionFraude === 'revision') escalate('revision');
-    else if (rules.accionFraude === 'reducir') limitMultiplier = Math.min(limitMultiplier, REDUCED_LIMIT_MULTIPLIER);
+    if (rules.accionFraude === 'bloquear') {
+      escalate('rechazado');
+      reasons.push(`presenta una alerta de fraude "${company.fraud_alert}" y la regla activa bloquea la cuenta automáticamente`);
+    } else if (rules.accionFraude === 'verificacion') {
+      escalate('revision');
+      reasons.push(`presenta una alerta de fraude "${company.fraud_alert}" que requiere verificación adicional antes de aprobar`);
+    } else if (rules.accionFraude === 'revision') {
+      escalate('revision');
+      reasons.push(`presenta una alerta de fraude "${company.fraud_alert}" marcada para revisión manual`);
+    } else if (rules.accionFraude === 'reducir') {
+      limitMultiplier = Math.min(limitMultiplier, REDUCED_LIMIT_MULTIPLIER);
+      reasons.push(`presenta una alerta de fraude "${company.fraud_alert}", por lo que se redujo la línea de crédito recomendada`);
+    }
   }
 
   if (!company.bureau_available) {
-    if (rules.tratamientoInfoIncompleta === 'rechazar') escalate('rechazado');
-    else if (rules.tratamientoInfoIncompleta === 'solicitar-info') escalate('revision');
-    else if (rules.tratamientoInfoIncompleta === 'revision-manual') escalate('revision');
-    else if (rules.tratamientoInfoIncompleta === 'limite-reducido') limitMultiplier = Math.min(limitMultiplier, REDUCED_LIMIT_MULTIPLIER);
+    if (rules.tratamientoInfoIncompleta === 'rechazar') {
+      escalate('rechazado');
+      reasons.push('no cuenta con información de buró disponible y la regla activa exige rechazar estos casos');
+    } else if (rules.tratamientoInfoIncompleta === 'solicitar-info') {
+      escalate('revision');
+      reasons.push('no cuenta con información de buró disponible, por lo que se solicitará información adicional');
+    } else if (rules.tratamientoInfoIncompleta === 'revision-manual') {
+      escalate('revision');
+      reasons.push('no cuenta con información de buró disponible y se marcó para revisión manual');
+    } else if (rules.tratamientoInfoIncompleta === 'limite-reducido') {
+      limitMultiplier = Math.min(limitMultiplier, REDUCED_LIMIT_MULTIPLIER);
+      reasons.push('no cuenta con información de buró disponible, por lo que se aprueba con un límite reducido');
+    }
   }
 
-  if (company.utilization > rules.utilizacionMaxima) escalate('revision');
-  if (company.concentration > rules.concentracionGasto) escalate('revision');
-  if (company.days_late > rules.diasMora) escalate('rechazado');
+  if (company.utilization > rules.utilizacionMaxima) {
+    escalate('revision');
+    reasons.push(`su utilización actual (${company.utilization}%) supera el máximo permitido de ${rules.utilizacionMaxima}%`);
+  }
+
+  if (company.concentration > rules.concentracionGasto) {
+    escalate('revision');
+    reasons.push(`concentra ${company.concentration}% de su gasto en una sola fuente, por encima del límite de ${rules.concentracionGasto}%`);
+  }
+
+  if (company.days_late > rules.diasMora) {
+    escalate('rechazado');
+    reasons.push(`registra ${company.days_late} días de mora, por encima del máximo permitido de ${rules.diasMora} días`);
+  }
 
   const limit = status === 'rechazado'
     ? 0
@@ -69,8 +120,45 @@ function evaluateCompany(company, rules) {
   const pd = estimatePd(company);
   const exposure = status === 'aprobado' ? limit * (company.utilization / 100) : 0;
   const expectedLoss = exposure * pd * LGD;
+  const confidence = estimateConfidence(company, rules);
 
-  return { company, status, limit, pd, expectedLoss };
+  return { company, status, limit, limitMultiplier, pd, expectedLoss, confidence, reasons };
+}
+
+// Construye 1 a 3 frases en lenguaje natural explicando la decisión,
+// a partir de las reglas que realmente se activaron para esta empresa.
+function generateExplanation(evaluation) {
+  const { company, status, reasons } = evaluation;
+
+  const verdictPhrase = status === 'aprobado'
+    ? `${company.name} fue aprobada`
+    : status === 'revision'
+      ? `${company.name} fue marcada para revisión manual`
+      : `${company.name} fue rechazada`;
+
+  if (reasons.length === 0) {
+    return `${verdictPhrase} porque todas sus señales de riesgo están dentro de los límites definidos por las reglas activas: utilización, mora, concentración y antigüedad en rango saludable, sin alertas de fraude o identidad, y con información de buró disponible.`;
+  }
+
+  let reasonSentence;
+  if (reasons.length === 1) {
+    reasonSentence = `${verdictPhrase} porque ${reasons[0]}.`;
+  } else {
+    const last = reasons[reasons.length - 1];
+    const rest = reasons.slice(0, -1).join(', ');
+    reasonSentence = `${verdictPhrase} porque ${rest}, y además ${last}.`;
+  }
+
+  let extra = '';
+  if (status === 'aprobado' && evaluation.limitMultiplier < 1) {
+    extra = ' La línea recomendada se ajustó a la baja como medida de mitigación.';
+  } else if (status === 'revision') {
+    extra = ' Un analista debe confirmar la decisión antes de habilitar cualquier línea de crédito.';
+  } else if (status === 'rechazado') {
+    extra = ' No se recomienda asignar línea de crédito bajo las reglas activas.';
+  }
+
+  return reasonSentence + extra;
 }
 
 function evaluatePortfolio(companyList, rules) {

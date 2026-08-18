@@ -26,9 +26,21 @@ function identityBadgeClass(signal) {
   return signal === 'alerta' ? 'badge-warning' : 'badge-ok';
 }
 
+function statusBadgeClass(status) {
+  if (status === 'aprobado') return 'badge-ok';
+  if (status === 'revision') return 'badge-warning';
+  return 'badge-danger';
+}
+
+const STATUS_LABELS = {
+  aprobado: 'Aprobado',
+  revision: 'En revisión',
+  rechazado: 'Rechazado',
+};
+
 function renderCompanyDetail(id) {
   const detail = document.getElementById('company-detail');
-  if (!detail || typeof companies === 'undefined') return;
+  if (!detail || typeof companies === 'undefined' || typeof getCurrentRules === 'undefined') return;
 
   const company = companies.find((c) => c.id === id);
 
@@ -41,48 +53,44 @@ function renderCompanyDetail(id) {
     return;
   }
 
+  const rules = getCurrentRules();
+  const evaluation = evaluateCompany(company, rules);
+  const explanation = generateExplanation(evaluation);
+
+  const utilizationChipClass = company.utilization > rules.utilizacionMaxima ? 'badge-warning' : 'badge-ok';
+  const variabilityChipClass = company.flow_variability > 30 ? 'badge-danger' : company.flow_variability > 15 ? 'badge-warning' : 'badge-ok';
+  const paymentChipClass = company.payment_history >= 80 ? 'badge-ok' : company.payment_history >= 60 ? 'badge-warning' : 'badge-danger';
+  const bureauChipClass = company.bureau_available ? 'badge-ok' : 'badge-warning';
+
   detail.innerHTML = `
     <div class="detail-header">
       <h3>${company.name}</h3>
-      <span class="badge-pill ${identityBadgeClass(company.identity_signal)}">Identidad: ${company.identity_signal}</span>
+      <span class="badge-pill ${statusBadgeClass(evaluation.status)}">${STATUS_LABELS[evaluation.status]}</span>
     </div>
-    <div class="detail-stats">
-      <div class="detail-stat">
-        <span class="detail-label">Antigüedad</span>
-        <span class="detail-value">${company.months_active} meses</span>
+
+    <div class="detail-highlights">
+      <div class="detail-highlight">
+        <span class="detail-label">Línea de crédito recomendada</span>
+        <span class="detail-highlight-value">${formatCurrency(evaluation.limit)}</span>
       </div>
-      <div class="detail-stat">
-        <span class="detail-label">Ingreso mensual</span>
-        <span class="detail-value">${formatCurrency(company.monthly_revenue)}</span>
+      <div class="detail-highlight">
+        <span class="detail-label">Nivel de confianza</span>
+        <span class="detail-highlight-value">${evaluation.confidence}%</span>
       </div>
-      <div class="detail-stat">
-        <span class="detail-label">Variabilidad de flujo</span>
-        <span class="detail-value">${company.flow_variability}%</span>
-      </div>
-      <div class="detail-stat">
-        <span class="detail-label">Utilización</span>
-        <span class="detail-value">${company.utilization}%</span>
-      </div>
-      <div class="detail-stat">
-        <span class="detail-label">Historial de pago</span>
-        <span class="detail-value">${company.payment_history}</span>
-      </div>
-      <div class="detail-stat">
-        <span class="detail-label">Días de mora</span>
-        <span class="detail-value">${company.days_late}</span>
-      </div>
-      <div class="detail-stat">
-        <span class="detail-label">Concentración</span>
-        <span class="detail-value">${company.concentration}%</span>
-      </div>
-      <div class="detail-stat">
-        <span class="detail-label">Buró disponible</span>
-        <span class="detail-value">${company.bureau_available ? 'Sí' : 'No'}</span>
-      </div>
-      <div class="detail-stat">
-        <span class="detail-label">Alerta de fraude</span>
-        <span class="badge-pill ${fraudBadgeClass(company.fraud_alert)}">${company.fraud_alert}</span>
-      </div>
+    </div>
+
+    <div class="detail-chips">
+      <span class="badge-pill ${utilizationChipClass}">Utilización: ${company.utilization}%</span>
+      <span class="badge-pill ${variabilityChipClass}">Variabilidad de flujo: ${company.flow_variability}%</span>
+      <span class="badge-pill ${paymentChipClass}">Historial de pago: ${company.payment_history}</span>
+      <span class="badge-pill ${identityBadgeClass(company.identity_signal)}">Identidad: ${company.identity_signal}</span>
+      <span class="badge-pill ${fraudBadgeClass(company.fraud_alert)}">Fraude: ${company.fraud_alert}</span>
+      <span class="badge-pill ${bureauChipClass}">Buró: ${company.bureau_available ? 'disponible' : 'no disponible'}</span>
+    </div>
+
+    <div class="detail-explanation">
+      <span class="detail-label">Razón explicable</span>
+      <p>${explanation}</p>
     </div>
   `;
 }
@@ -132,8 +140,13 @@ function renderMetrics() {
   document.getElementById('metric-avg-utilization').textContent = formatPercent(metrics.avgUtilization);
 }
 
+function refreshFromRules() {
+  renderMetrics();
+  renderCompanyDetail(selectedCompanyId);
+}
+
 document.querySelectorAll('#controls input, #controls select').forEach((control) => {
-  control.addEventListener('input', renderMetrics);
+  control.addEventListener('input', refreshFromRules);
 });
 
 renderMetrics();
