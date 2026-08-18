@@ -8,39 +8,224 @@
 </head>
 <body>
 
-  <header class="site-header">
-    <div class="container header-inner">
-      <div class="logo">
+  <div class="app-shell">
+
+    <aside class="sidebar">
+      <div class="sidebar-logo">
         <span class="logo-mark">RB</span>
         <span class="logo-text">Risk Builder</span>
       </div>
-      <nav class="main-nav">
-        <a href="#intro">Inicio</a>
-        <a href="#">Proyectos</a>
-        <a href="#">Documentación</a>
+      <nav class="sidebar-nav">
+        <a href="#intro" class="active">Inicio</a>
+        <a href="#controls">Panel de reglas</a>
+        <a href="#metrics">Resultados</a>
+        <a href="#companies">Cartera sintética</a>
       </nav>
-    </div>
-  </header>
+    </aside>
 
-  <main>
-    <section id="intro" class="intro">
-      <div class="container">
-        <div class="card intro-card">
-          <span class="badge">Nueva herramienta</span>
-          <h1>Construye y evalúa riesgos de forma simple</h1>
-          <p>
-            Risk Builder te ayuda a identificar, clasificar y priorizar riesgos
-            en tus proyectos, con una interfaz clara y flujos pensados para
-            equipos que necesitan decisiones rápidas y bien fundamentadas.
-          </p>
-          <div class="intro-actions">
-            <button class="btn btn-primary">Comenzar</button>
-            <button class="btn btn-secondary">Ver más</button>
+    <div class="main-area">
+      <header class="topbar">
+        <div class="topbar-right">
+          <div class="lang-switch">
+            <button class="lang-option active" type="button">ES</button>
+            <button class="lang-option" type="button">EN</button>
           </div>
+          <button class="profile-btn" type="button">
+            <span class="avatar">AO</span>
+          </button>
         </div>
-      </div>
-    </section>
-  </main>
+      </header>
 
+      <main>
+        <section id="intro" class="intro">
+          <div class="container">
+            <div class="card intro-card">
+              <span class="badge">Nueva herramienta</span>
+              <h1>Simula reglas antes de llevarlas a producción</h1>
+              <p>
+                Risk Builder te permite a ti y a los equipos de producto, credit
+                risk, fraud operations y data science de Clara simular cómo
+                distintas combinaciones de reglas modificarían la aprobación, la
+                utilización, el riesgo y la experiencia del cliente antes de
+                aplicarlas en producción.
+              </p>
+              <div class="intro-actions">
+                <button class="btn btn-primary">Comenzar</button>
+                <button class="btn btn-secondary">Ver más</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="controls" class="controls">
+          <div class="container">
+            <div class="section-heading">
+              <h2>Panel de reglas</h2>
+              <p>Ajusta los parámetros y observa cómo se comportaría la regla.</p>
+            </div>
+
+            <div class="card controls-card">
+              <div class="controls-grid">
+
+                <div class="control">
+                  <div class="control-label">
+                    <label for="utilizacion-maxima">Utilización máxima</label>
+                    <span class="control-value" id="utilizacion-maxima-value">80%</span>
+                  </div>
+                  <input
+                    type="range"
+                    id="utilizacion-maxima"
+                    min="0"
+                    max="100"
+                    step="1"
+                    value="80"
+                    data-suffix="%"
+                  >
+                </div>
+
+                <div class="control">
+                  <div class="control-label">
+                    <label for="dias-mora">Días de mora</label>
+                    <span class="control-value" id="dias-mora-value">30 días</span>
+                  </div>
+                  <input
+                    type="range"
+                    id="dias-mora"
+                    min="0"
+                    max="90"
+                    step="1"
+                    value="30"
+                    data-suffix=" días"
+                  >
+                </div>
+
+                <div class="control">
+                  <div class="control-label">
+                    <label for="concentracion-gasto">Concentración de gasto</label>
+                    <span class="control-value" id="concentracion-gasto-value">40%</span>
+                  </div>
+                  <input
+                    type="range"
+                    id="concentracion-gasto"
+                    min="0"
+                    max="100"
+                    step="1"
+                    value="40"
+                    data-suffix="%"
+                  >
+                </div>
+
+                <div class="control">
+                  <div class="control-label">
+                    <label for="antiguedad-minima">Antigüedad mínima</label>
+                    <span class="control-value" id="antiguedad-minima-value">6 meses</span>
+                  </div>
+                  <input
+                    type="range"
+                    id="antiguedad-minima"
+                    min="0"
+                    max="36"
+                    step="1"
+                    value="6"
+                    data-suffix=" meses"
+                  >
+                </div>
+
+                <div class="control">
+                  <div class="control-label">
+                    <label for="accion-fraude">Acción ante fraude</label>
+                  </div>
+                  <select id="accion-fraude">
+                    <option value="bloquear">Bloquear cuenta</option>
+                    <option value="reducir">Reducir línea de crédito</option>
+                    <option value="verificacion">Solicitar verificación adicional</option>
+                    <option value="revision" selected>Marcar para revisión manual</option>
+                  </select>
+                </div>
+
+                <div class="control">
+                  <div class="control-label">
+                    <label for="info-incompleta">Tratamiento de info incompleta</label>
+                  </div>
+                  <select id="info-incompleta">
+                    <option value="rechazar">Rechazar solicitud</option>
+                    <option value="limite-reducido" selected>Aprobar con límite reducido</option>
+                    <option value="solicitar-info">Solicitar información adicional</option>
+                    <option value="revision-manual">Aprobar con revisión manual</option>
+                  </select>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="metrics" class="metrics">
+          <div class="container">
+            <div class="section-heading">
+              <h2>Resultados</h2>
+              <p>Se recalculan en vivo con cada ajuste al panel de reglas.</p>
+            </div>
+
+            <div class="metrics-grid">
+              <div class="card metric-card">
+                <span class="metric-label">Tasa de aprobación</span>
+                <span class="metric-value" id="metric-approval-rate">—</span>
+              </div>
+              <div class="card metric-card">
+                <span class="metric-label">Cupo total</span>
+                <span class="metric-value" id="metric-total-limit">—</span>
+              </div>
+              <div class="card metric-card">
+                <span class="metric-label">Pérdida esperada</span>
+                <span class="metric-value" id="metric-expected-loss">—</span>
+              </div>
+              <div class="card metric-card">
+                <span class="metric-label">% en revisión</span>
+                <span class="metric-value" id="metric-review-rate">—</span>
+              </div>
+              <div class="card metric-card">
+                <span class="metric-label">Utilización promedio</span>
+                <span class="metric-value" id="metric-avg-utilization">—</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="companies" class="companies">
+          <div class="container">
+            <div class="section-heading">
+              <h2>Cartera sintética</h2>
+              <p>30 empresas de prueba generadas de forma determinística para simular reglas.</p>
+            </div>
+
+            <div class="companies-layout">
+              <div class="card table-card">
+                <div class="table-scroll">
+                  <table class="companies-table">
+                    <thead>
+                      <tr>
+                        <th>Empresa</th>
+                        <th>Antigüedad</th>
+                        <th>Utilización</th>
+                      </tr>
+                    </thead>
+                    <tbody id="companies-tbody"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="card detail-card" id="company-detail"></div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+  </div>
+
+  <script src="companies.js"></script>
+  <script src="rules-engine.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
