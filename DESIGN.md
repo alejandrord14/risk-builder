@@ -46,7 +46,7 @@ spacing:
 components:
   button-primary:
     backgroundColor: "{colors.teal}"
-    textColor: "{colors.white}"
+    textColor: "{colors.navy}"
     rounded: "{rounded.md}"
     padding: "12px 22px"
   button-secondary:
@@ -175,7 +175,7 @@ No hay bordes decorativos: el único borde real es la línea divisoria de 1px (`
 
 ### Buttons
 - **Shape:** `10px` de radio (`rounded.md`), sin borde.
-- **Primary:** fondo teal sólido, texto blanco, `padding: 12px 22px`. Es la única acción de peso total permitida en una vista.
+- **Primary:** fondo teal sólido, texto navy (blanco sobre teal no cumple contraste WCAG AA), `padding: 12px 22px`. Es la única acción de peso total permitida en una vista.
 - **Secondary:** fondo `bg` (`#F7F8FA`), texto navy — mismo radio y padding que el primario, para que el par se lea como un grupo de decisión, no como dos componentes distintos.
 - **Hover:** `opacity: 0.9` en ambos — la única transición de estado en botones, deliberadamente sutil.
 
@@ -202,7 +202,7 @@ No hay bordes decorativos: el único borde real es la línea divisoria de 1px (`
 ### Navigation (Sidebar)
 - **Style:** enlaces de `14px/500` en blanco al 65% de opacidad sobre navy; `padding: 10px 12px`, radio `8px`.
 - **Hover:** blanco al 6% de opacidad de fondo, texto sube a blanco 100%.
-- **Active:** fondo teal sólido, texto blanco 100% — el único uso de teal como relleno grande en todo el sistema, reservado exclusivamente para "dónde estoy".
+- **Active:** fondo teal sólido, texto navy 100% (blanco sobre teal no cumple contraste WCAG AA) — el único uso de teal como relleno grande en todo el sistema, reservado exclusivamente para "dónde estoy".
 
 ### Table (Cartera sintética)
 - **Header:** fondo `bg`, texto `label` (12px/600, uppercase, letter-spacing 0.03em, color `text-muted`), borde inferior de 1px.
