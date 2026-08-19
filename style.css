@@ -416,7 +416,7 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 16px 20px;
+  padding: 20px 24px;
   border-bottom: 1px solid #F0F1F4;
 }
 
@@ -458,7 +458,7 @@ body {
 }
 
 .companies-table td {
-  padding: 14px 20px;
+  padding: 16px 24px;
   text-align: left;
 }
 
@@ -475,7 +475,7 @@ body {
   width: 100%;
   border: none;
   background: transparent;
-  padding: 14px 20px;
+  padding: 16px 24px;
   text-align: left;
   color: var(--text-muted);
   font-family: inherit;
@@ -605,28 +605,9 @@ body {
   color: var(--navy);
 }
 
-.detail-stats {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.detail-stat {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
 .detail-label {
   font-size: 13px;
   color: var(--text-muted);
-}
-
-.detail-value {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--navy);
 }
 
 .detail-highlights {
