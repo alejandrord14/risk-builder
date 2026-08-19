@@ -576,6 +576,8 @@ body {
 .detail-card {
   padding: 32px;
   min-height: 320px;
+  position: sticky;
+  top: 24px;
 }
 
 .detail-empty {
@@ -656,5 +658,9 @@ body {
 @media (max-width: 900px) {
   .companies-layout {
     grid-template-columns: 1fr;
+  }
+
+  .detail-card {
+    position: static;
   }
 }

@@ -145,8 +145,8 @@ El contenido vive dentro de un `.container` con `max-width: 1100px` centrado y `
 
 Los datos se organizan en grids explícitos, nunca en flujo libre:
 - Panel de reglas: grid de 2 columnas, `gap: 32px 40px` (colapsa a 1 columna bajo 640px).
-- Resultados: grid de 5 columnas, `gap: 20px` (colapsa a 3 columnas bajo 1100px, 2 columnas bajo 640px).
-- Cartera + detalle: grid `3fr 2fr`, `gap: 24px` (colapsa a 1 columna apilada bajo 900px).
+- Resultados: grid de 6 columnas, `gap: 20px` (colapsa a 3 columnas bajo 1100px, 2 columnas bajo 640px).
+- Cartera + detalle: grid `3fr 2fr`, `gap: 24px` (colapsa a 1 columna apilada bajo 900px). El panel de detalle es `position: sticky` (`top: 24px`) mientras las dos columnas están lado a lado, para que no quede un hueco vacío bajo un panel corto junto a una tabla larga; se vuelve estático (`position: static`) en el breakpoint apilado, donde ya no comparte alto con la tabla.
 
 ### Named Rules
 **The Grid-Not-Flow Rule.** Cualquier colección de datos relacionados (reglas, métricas, empresas) vive en un grid con columnas explícitas y un breakpoint de colapso definido — nunca en un flujo de texto libre.
