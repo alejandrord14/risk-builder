@@ -58,7 +58,6 @@ function renderCompanyDetail(id) {
   const explanation = generateExplanation(evaluation);
 
   const utilizationChipClass = company.utilization > rules.utilizacionMaxima ? 'badge-warning' : 'badge-ok';
-  const variabilityChipClass = company.flow_variability > 30 ? 'badge-danger' : company.flow_variability > 15 ? 'badge-warning' : 'badge-ok';
   const paymentChipClass = company.payment_history >= 80 ? 'badge-ok' : company.payment_history >= 60 ? 'badge-warning' : 'badge-danger';
   const bureauChipClass = company.bureau_available ? 'badge-ok' : 'badge-warning';
 
@@ -81,11 +80,11 @@ function renderCompanyDetail(id) {
 
     <div class="detail-chips">
       <span class="badge-pill ${utilizationChipClass}">Utilización: ${company.utilization}%</span>
-      <span class="badge-pill ${variabilityChipClass}">Variabilidad de flujo: ${company.flow_variability}%</span>
       <span class="badge-pill ${paymentChipClass}">Historial de pago: ${company.payment_history}</span>
       <span class="badge-pill ${identityBadgeClass(company.identity_signal)}">Identidad: ${company.identity_signal}</span>
       <span class="badge-pill ${fraudBadgeClass(company.fraud_alert)}">Fraude: ${company.fraud_alert}</span>
       <span class="badge-pill ${bureauChipClass}">Buró: ${company.bureau_available ? 'disponible' : 'no disponible'}</span>
+      <span class="detail-stat" title="Contribuye a la pérdida esperada; no forma parte de las 6 reglas activas ni cambia el estado de la solicitud">Variabilidad de flujo: ${company.flow_variability}%</span>
     </div>
 
     <div class="detail-explanation">

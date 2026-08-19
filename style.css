@@ -497,6 +497,14 @@ body {
   color: var(--red);
 }
 
+.detail-stat {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 3px 0;
+}
+
 /* Detail panel */
 
 .detail-card {

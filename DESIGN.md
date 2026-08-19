@@ -181,8 +181,8 @@ No hay bordes decorativos: el único borde real es la línea divisoria de 1px (`
 
 ### Chips / Badges (`badge-pill`)
 - **Style:** texto en color pleno sobre un tinte del mismo color al 12% de opacidad, radio `999px`, `padding: 3px 10px`, `font-size: 12px/600`.
-- **Variantes:** `ok` (teal — aprobado, identidad sin alerta, buró disponible), `warning` (ámbar — en revisión, fraude medio, variabilidad/historial intermedios), `danger` (rojo — rechazado, fraude alto).
-- **Uso:** siempre para valores discretos con connotación de riesgo; nunca para etiquetar contenido neutral.
+- **Variantes:** `ok` (teal — aprobado, identidad sin alerta, buró disponible), `warning` (ámbar — en revisión, fraude medio, historial intermedio), `danger` (rojo — rechazado, fraude alto).
+- **Uso:** siempre para valores discretos con connotación de riesgo; nunca para etiquetar contenido neutral. Un valor que alimenta la pérdida esperada pero no participa en ninguna de las 6 reglas activas (ej. variabilidad de flujo) no debe llevar color de riesgo — usa `.detail-stat` (texto `text-muted`, sin pill) para no implicar un veredicto que el sistema de reglas no está emitiendo.
 
 ### Cards / Containers
 - **Corner Style:** `16px` (`rounded.lg`).
