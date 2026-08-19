@@ -177,6 +177,10 @@
                 <span class="metric-value" id="metric-review-rate">—</span>
               </div>
               <div class="card metric-card">
+                <span class="metric-label">% rechazado</span>
+                <span class="metric-value" id="metric-reject-rate">—</span>
+              </div>
+              <div class="card metric-card">
                 <span class="metric-label">Utilización promedio</span>
                 <span class="metric-value" id="metric-avg-utilization">—</span>
               </div>
@@ -193,14 +197,23 @@
 
             <div class="companies-layout">
               <div class="card table-card">
+                <div class="table-toolbar">
+                  <label for="status-filter" class="table-toolbar-label">Filtrar por estado</label>
+                  <select id="status-filter">
+                    <option value="todos">Todos los estados</option>
+                    <option value="aprobado">Aprobado</option>
+                    <option value="revision">En revisión</option>
+                    <option value="rechazado">Rechazado</option>
+                  </select>
+                </div>
                 <div class="table-scroll">
                   <table class="companies-table">
                     <thead>
                       <tr>
-                        <th>Empresa</th>
-                        <th>Antigüedad</th>
-                        <th>Utilización</th>
-                        <th>Estado</th>
+                        <th><button type="button" class="th-sort" data-sort="name">Empresa<span class="sort-indicator"></span></button></th>
+                        <th><button type="button" class="th-sort" data-sort="months_active">Antigüedad<span class="sort-indicator"></span></button></th>
+                        <th><button type="button" class="th-sort" data-sort="utilization">Utilización<span class="sort-indicator"></span></button></th>
+                        <th><button type="button" class="th-sort" data-sort="status">Estado<span class="sort-indicator"></span></button></th>
                       </tr>
                     </thead>
                     <tbody id="companies-tbody"></tbody>

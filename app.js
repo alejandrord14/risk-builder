@@ -94,11 +94,33 @@ function renderCompanyDetail(id) {
   `;
 }
 
+const STATUS_ORDER = ['aprobado', 'revision', 'rechazado'];
+
+let statusFilter = 'todos';
+let sortColumn = null;
+let sortDirection = 'asc';
+
 function renderCompaniesTable() {
   const tbody = document.getElementById('companies-tbody');
   if (!tbody || typeof companies === 'undefined' || typeof getCurrentRules === 'undefined') return;
 
-  const evaluations = evaluatePortfolio(companies, getCurrentRules());
+  let evaluations = evaluatePortfolio(companies, getCurrentRules());
+
+  if (statusFilter !== 'todos') {
+    evaluations = evaluations.filter(({ status }) => status === statusFilter);
+  }
+
+  if (sortColumn) {
+    const direction = sortDirection === 'asc' ? 1 : -1;
+    evaluations = [...evaluations].sort((a, b) => {
+      if (sortColumn === 'name') {
+        return a.company.name.localeCompare(b.company.name) * direction;
+      }
+      const valueA = sortColumn === 'status' ? STATUS_ORDER.indexOf(a.status) : a.company[sortColumn];
+      const valueB = sortColumn === 'status' ? STATUS_ORDER.indexOf(b.status) : b.company[sortColumn];
+      return (valueA - valueB) * direction;
+    });
+  }
 
   tbody.innerHTML = evaluations.map(({ company: c, status }) => `
     <tr
@@ -113,6 +135,21 @@ function renderCompaniesTable() {
       <td><span class="badge-pill ${statusBadgeClass(status)}">${STATUS_LABELS[status]}</span></td>
     </tr>
   `).join('');
+
+  updateSortIndicators();
+}
+
+function updateSortIndicators() {
+  document.querySelectorAll('.th-sort').forEach((button) => {
+    const indicator = button.querySelector('.sort-indicator');
+    if (button.dataset.sort === sortColumn) {
+      button.setAttribute('aria-sort', sortDirection === 'asc' ? 'ascending' : 'descending');
+      indicator.textContent = sortDirection === 'asc' ? '▲' : '▼';
+    } else {
+      button.removeAttribute('aria-sort');
+      indicator.textContent = '';
+    }
+  });
 }
 
 function selectCompanyRow(row) {
@@ -143,6 +180,27 @@ if (companiesTbody) {
   });
 }
 
+const statusFilterSelect = document.getElementById('status-filter');
+if (statusFilterSelect) {
+  statusFilterSelect.addEventListener('change', (event) => {
+    statusFilter = event.target.value;
+    renderCompaniesTable();
+  });
+}
+
+document.querySelectorAll('.th-sort').forEach((button) => {
+  button.addEventListener('click', () => {
+    const column = button.dataset.sort;
+    if (sortColumn === column) {
+      sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      sortColumn = column;
+      sortDirection = 'asc';
+    }
+    renderCompaniesTable();
+  });
+});
+
 renderCompaniesTable();
 renderCompanyDetail(selectedCompanyId);
 
@@ -161,6 +219,7 @@ function renderMetrics() {
   document.getElementById('metric-total-limit').textContent = formatCurrency(Math.round(metrics.totalLimit));
   document.getElementById('metric-expected-loss').textContent = formatCurrency(Math.round(metrics.expectedLoss));
   document.getElementById('metric-review-rate').textContent = formatPercent(metrics.reviewRate);
+  document.getElementById('metric-reject-rate').textContent = formatPercent(metrics.rejectRate);
   document.getElementById('metric-avg-utilization').textContent = formatPercent(metrics.avgUtilization);
 }
 

@@ -358,7 +358,7 @@ body {
 
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 20px;
 }
 
@@ -411,6 +411,40 @@ body {
   overflow: hidden;
 }
 
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #F0F1F4;
+}
+
+.table-toolbar-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.table-toolbar select {
+  appearance: none;
+  padding: 8px 32px 8px 12px;
+  border-radius: 10px;
+  border: 1px solid #E1E4EA;
+  background: var(--white);
+  color: var(--navy);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2316213E' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+.table-toolbar select:focus {
+  border-color: var(--teal);
+  outline: none;
+}
+
 .table-scroll {
   overflow-x: auto;
 }
@@ -422,20 +456,51 @@ body {
   white-space: nowrap;
 }
 
-.companies-table th,
 .companies-table td {
   padding: 14px 20px;
   text-align: left;
 }
 
 .companies-table thead th {
+  padding: 0;
   background: var(--bg);
+  border-bottom: 1px solid #E1E4EA;
+}
+
+.th-sort {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 14px 20px;
+  text-align: left;
   color: var(--text-muted);
+  font-family: inherit;
   font-weight: 600;
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  border-bottom: 1px solid #E1E4EA;
+  cursor: pointer;
+}
+
+.th-sort:hover {
+  color: var(--navy);
+}
+
+.th-sort[aria-sort="ascending"],
+.th-sort[aria-sort="descending"] {
+  color: var(--navy);
+}
+
+.th-sort:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: -2px;
+}
+
+.sort-indicator {
+  font-size: 10px;
 }
 
 .companies-table tbody tr {

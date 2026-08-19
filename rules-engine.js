@@ -169,6 +169,7 @@ function computePortfolioMetrics(evaluations) {
   const total = evaluations.length;
   const approved = evaluations.filter((e) => e.status === 'aprobado');
   const inReview = evaluations.filter((e) => e.status === 'revision');
+  const rejected = evaluations.filter((e) => e.status === 'rechazado');
 
   const totalLimit = approved.reduce((sum, e) => sum + e.limit, 0);
   const totalExpectedLoss = evaluations.reduce((sum, e) => sum + e.expectedLoss, 0);
@@ -179,6 +180,7 @@ function computePortfolioMetrics(evaluations) {
   return {
     approvalRate: total ? (approved.length / total) * 100 : 0,
     reviewRate: total ? (inReview.length / total) * 100 : 0,
+    rejectRate: total ? (rejected.length / total) * 100 : 0,
     totalLimit,
     expectedLoss: totalExpectedLoss,
     avgUtilization,
