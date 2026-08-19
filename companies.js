@@ -107,7 +107,7 @@ function summarize(values) {
 
 const companies = generateCompanies(30);
 
-console.log(`Risk Builder — ${companies.length} empresas sintéticas generadas (seed=${SEED})`);
+console.log(`Risk Builder - ${companies.length} empresas sintéticas generadas (seed=${SEED})`);
 console.table({
   utilization: summarize(companies.map((c) => c.utilization)),
   days_late: summarize(companies.map((c) => c.days_late)),

@@ -48,12 +48,12 @@ components:
     backgroundColor: "{colors.teal}"
     textColor: "{colors.navy}"
     rounded: "{rounded.md}"
-    padding: "12px 22px"
+    padding: "14px 26px"
   button-secondary:
     backgroundColor: "{colors.bg}"
     textColor: "{colors.navy}"
     rounded: "{rounded.md}"
-    padding: "12px 22px"
+    padding: "14px 26px"
   card:
     backgroundColor: "{colors.white}"
     rounded: "{rounded.lg}"
@@ -174,9 +174,9 @@ No hay bordes decorativos: el único borde real es la línea divisoria de 1px (`
 ## Components
 
 ### Buttons
-- **Shape:** `10px` de radio (`rounded.md`), sin borde.
-- **Primary:** fondo teal sólido, texto navy (blanco sobre teal no cumple contraste WCAG AA), `padding: 12px 22px`. Es la única acción de peso total permitida en una vista.
-- **Secondary:** fondo `bg` (`#F7F8FA`), texto navy — mismo radio y padding que el primario, para que el par se lea como un grupo de decisión, no como dos componentes distintos.
+- **Shape:** `10px` de radio (`rounded.md`).
+- **Primary:** fondo teal sólido, texto navy (blanco sobre teal no cumple contraste WCAG AA), sin borde, `padding: 14px 26px`. Es la única acción de peso total permitida en una vista.
+- **Secondary:** fondo `bg` (`#F7F8FA`), texto navy, borde de 1px (`#E1E4EA`, igual que un input) para que se lea como botón incluso sobre una tarjeta blanca — mismo radio y padding que el primario, para que el par se lea como un grupo de decisión, no como dos componentes distintos.
 - **Hover:** `opacity: 0.9` en ambos — la única transición de estado en botones, deliberadamente sutil.
 
 ### Chips / Badges (`badge-pill`)
@@ -189,7 +189,7 @@ No hay bordes decorativos: el único borde real es la línea divisoria de 1px (`
 - **Background:** blanco sólido sobre el fondo `#F7F8FA` de la app.
 - **Shadow Strategy:** `card-ambient` únicamente (ver Elevation & Depth).
 - **Border:** ninguno — la sombra y el contraste de fondo son suficientes para definir el borde de la tarjeta.
-- **Internal Padding:** varía por densidad de contenido: `32px 40px` para el header de tarea de la introducción, `40px` para el panel de reglas, `32px` para el panel de detalle, `24px` para las tarjetas de métrica, `0` cuando la tarjeta envuelve directamente una tabla con scroll propio.
+- **Internal Padding:** varía por densidad de contenido: `40px 48px` para el header de tarea de la introducción, `40px` para el panel de reglas, `32px` para el panel de detalle, `24px` para las tarjetas de métrica, `0` cuando la tarjeta envuelve directamente una tabla con scroll propio.
 
 ### Inputs / Fields (Select)
 - **Style:** borde de 1px (`#E1E4EA`), fondo blanco, radio `10px`, flecha inline en SVG (no fuente de íconos), `padding: 10px 14px`.
