@@ -97,25 +97,50 @@ function renderCompanyDetail(id) {
 
 function renderCompaniesTable() {
   const tbody = document.getElementById('companies-tbody');
-  if (!tbody || typeof companies === 'undefined') return;
+  if (!tbody || typeof companies === 'undefined' || typeof getCurrentRules === 'undefined') return;
 
-  tbody.innerHTML = companies.map((c) => `
-    <tr data-id="${c.id}" class="company-row">
+  const evaluations = evaluatePortfolio(companies, getCurrentRules());
+
+  tbody.innerHTML = evaluations.map(({ company: c, status }) => `
+    <tr
+      data-id="${c.id}"
+      class="company-row${c.id === selectedCompanyId ? ' active' : ''}"
+      tabindex="0"
+      aria-selected="${c.id === selectedCompanyId}"
+    >
       <td class="company-name">${c.name}</td>
       <td>${c.months_active} m</td>
       <td>${c.utilization}%</td>
+      <td><span class="badge-pill ${statusBadgeClass(status)}">${STATUS_LABELS[status]}</span></td>
     </tr>
   `).join('');
+}
 
-  tbody.addEventListener('click', (event) => {
+function selectCompanyRow(row) {
+  row.parentElement.querySelectorAll('.company-row').forEach((r) => {
+    r.classList.remove('active');
+    r.setAttribute('aria-selected', 'false');
+  });
+  row.classList.add('active');
+  row.setAttribute('aria-selected', 'true');
+
+  selectedCompanyId = Number(row.dataset.id);
+  renderCompanyDetail(selectedCompanyId);
+}
+
+const companiesTbody = document.getElementById('companies-tbody');
+if (companiesTbody) {
+  companiesTbody.addEventListener('click', (event) => {
+    const row = event.target.closest('.company-row');
+    if (row) selectCompanyRow(row);
+  });
+
+  companiesTbody.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
     const row = event.target.closest('.company-row');
     if (!row) return;
-
-    tbody.querySelectorAll('.company-row').forEach((r) => r.classList.remove('active'));
-    row.classList.add('active');
-
-    selectedCompanyId = Number(row.dataset.id);
-    renderCompanyDetail(selectedCompanyId);
+    event.preventDefault();
+    selectCompanyRow(row);
   });
 }
 
@@ -142,6 +167,7 @@ function renderMetrics() {
 
 function refreshFromRules() {
   renderMetrics();
+  renderCompaniesTable();
   renderCompanyDetail(selectedCompanyId);
 }
 

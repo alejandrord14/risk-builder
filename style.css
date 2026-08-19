@@ -473,6 +473,11 @@ body {
   color: var(--teal);
 }
 
+.companies-table tbody tr.company-row:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: -2px;
+}
+
 .company-name {
   font-weight: 600;
   color: var(--navy);
