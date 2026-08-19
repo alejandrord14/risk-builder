@@ -182,38 +182,25 @@ body {
   box-shadow: 0 2px 8px rgba(22, 33, 62, 0.06);
 }
 
-.intro-card {
-  padding: 48px;
-  max-width: 640px;
+.task-header {
+  padding: 32px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
 }
 
-.badge {
-  display: inline-block;
-  background: rgba(23, 166, 115, 0.12);
-  color: var(--teal);
-  font-size: 12px;
-  font-weight: 600;
-  padding: 6px 12px;
-  border-radius: 999px;
-  margin-bottom: 20px;
-}
-
-.intro-card h1 {
-  font-size: 32px;
+.task-header-text h1 {
+  font-size: 22px;
   font-weight: 700;
   color: var(--navy);
-  margin-bottom: 16px;
+  margin-bottom: 4px;
 }
 
-.intro-card p {
+.task-header-text p {
   color: var(--text-muted);
-  font-size: 16px;
-  margin-bottom: 28px;
-}
-
-.intro-actions {
-  display: flex;
-  gap: 12px;
+  font-size: 14px;
+  max-width: 60ch;
 }
 
 .btn {
@@ -224,20 +211,23 @@ body {
   font-weight: 600;
   cursor: pointer;
   transition: opacity 0.15s ease;
+  flex-shrink: 0;
 }
 
 .btn:hover {
   opacity: 0.9;
 }
 
-.btn-primary {
-  background: var(--teal);
-  color: var(--white);
-}
-
 .btn-secondary {
   background: var(--bg);
   color: var(--navy);
+}
+
+@media (max-width: 640px) {
+  .task-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 /* Controls panel */

@@ -171,8 +171,22 @@ function refreshFromRules() {
   renderCompanyDetail(selectedCompanyId);
 }
 
-document.querySelectorAll('#controls input, #controls select').forEach((control) => {
+const ruleControls = document.querySelectorAll('#controls input, #controls select');
+const defaultRuleValues = new Map();
+
+ruleControls.forEach((control) => {
+  defaultRuleValues.set(control.id, control.value);
   control.addEventListener('input', refreshFromRules);
 });
+
+const resetRulesBtn = document.getElementById('reset-rules-btn');
+if (resetRulesBtn) {
+  resetRulesBtn.addEventListener('click', () => {
+    ruleControls.forEach((control) => {
+      control.value = defaultRuleValues.get(control.id);
+      control.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+  });
+}
 
 renderMetrics();
