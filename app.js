@@ -38,30 +38,14 @@ const STATUS_LABELS = {
   rechazado: 'Rechazado',
 };
 
-function renderCompanyDetail(id) {
-  const detail = document.getElementById('company-detail');
-  if (!detail || typeof companies === 'undefined' || typeof getCurrentRules === 'undefined') return;
-
-  const company = companies.find((c) => c.id === id);
-
-  if (!company) {
-    detail.innerHTML = `
-      <div class="detail-empty">
-        <p>Selecciona una empresa de la lista para ver su detalle.</p>
-      </div>
-    `;
-    return;
-  }
-
-  const rules = getCurrentRules();
-  const evaluation = evaluateCompany(company, rules);
+function buildCompanyDetailHTML(company, evaluation, rules) {
   const explanation = generateExplanation(evaluation);
 
   const utilizationChipClass = company.utilization > rules.utilizacionMaxima ? 'badge-warning' : 'badge-ok';
   const paymentChipClass = company.payment_history >= 80 ? 'badge-ok' : company.payment_history >= 60 ? 'badge-warning' : 'badge-danger';
   const bureauChipClass = company.bureau_available ? 'badge-ok' : 'badge-warning';
 
-  detail.innerHTML = `
+  return `
     <div class="detail-header">
       <h3>${company.name}</h3>
       <span class="badge-pill ${statusBadgeClass(evaluation.status)}">${STATUS_LABELS[evaluation.status]}</span>
@@ -94,6 +78,26 @@ function renderCompanyDetail(id) {
   `;
 }
 
+function renderCompanyDetail(id) {
+  const detail = document.getElementById('company-detail');
+  if (!detail || typeof companies === 'undefined' || typeof getCurrentRules === 'undefined') return;
+
+  const company = companies.find((c) => c.id === id);
+
+  if (!company) {
+    detail.innerHTML = `
+      <div class="detail-empty">
+        <p>Selecciona una empresa de la lista para ver su detalle.</p>
+      </div>
+    `;
+    return;
+  }
+
+  const rules = getCurrentRules();
+  const evaluation = evaluateCompany(company, rules);
+  detail.innerHTML = buildCompanyDetailHTML(company, evaluation, rules);
+}
+
 const STATUS_ORDER = ['aprobado', 'revision', 'rechazado'];
 
 let statusFilter = 'todos';
@@ -104,7 +108,8 @@ function renderCompaniesTable() {
   const tbody = document.getElementById('companies-tbody');
   if (!tbody || typeof companies === 'undefined' || typeof getCurrentRules === 'undefined') return;
 
-  let evaluations = evaluatePortfolio(companies, getCurrentRules());
+  const rules = getCurrentRules();
+  let evaluations = evaluatePortfolio(companies, rules);
 
   if (statusFilter !== 'todos') {
     evaluations = evaluations.filter(({ status }) => status === statusFilter);
@@ -122,19 +127,30 @@ function renderCompaniesTable() {
     });
   }
 
-  tbody.innerHTML = evaluations.map(({ company: c, status }) => `
-    <tr
-      data-id="${c.id}"
-      class="company-row${c.id === selectedCompanyId ? ' active' : ''}"
-      tabindex="0"
-      aria-selected="${c.id === selectedCompanyId}"
-    >
-      <td class="company-name" data-label="Empresa">${c.name}</td>
-      <td data-label="Antigüedad">${c.months_active} m</td>
-      <td data-label="Utilización">${c.utilization}%</td>
-      <td data-label="Estado"><span class="badge-pill ${statusBadgeClass(status)}">${STATUS_LABELS[status]}</span></td>
-    </tr>
-  `).join('');
+  tbody.innerHTML = evaluations.map((evaluation) => {
+    const c = evaluation.company;
+    const status = evaluation.status;
+    const isSelected = c.id === selectedCompanyId;
+
+    return `
+      <tr
+        data-id="${c.id}"
+        class="company-row${isSelected ? ' active' : ''}"
+        tabindex="0"
+        aria-selected="${isSelected}"
+        aria-expanded="${isSelected}"
+        aria-controls="company-detail-row-${c.id}"
+      >
+        <td class="company-name" data-label="Empresa"><span class="company-name-text">${c.name}<span class="expand-chevron" aria-hidden="true"></span></span></td>
+        <td data-label="Antigüedad">${c.months_active} m</td>
+        <td data-label="Utilización">${c.utilization}%</td>
+        <td data-label="Estado"><span class="badge-pill ${statusBadgeClass(status)}">${STATUS_LABELS[status]}</span></td>
+      </tr>
+      <tr class="company-detail-row" id="company-detail-row-${c.id}"${isSelected ? '' : ' hidden'}>
+        <td colspan="4">${isSelected ? buildCompanyDetailHTML(c, evaluation, rules) : ''}</td>
+      </tr>
+    `;
+  }).join('');
 
   updateSortIndicators();
 }
@@ -153,24 +169,19 @@ function updateSortIndicators() {
 }
 
 function selectCompanyRow(row) {
-  row.parentElement.querySelectorAll('.company-row').forEach((r) => {
-    r.classList.remove('active');
-    r.setAttribute('aria-selected', 'false');
-  });
-  row.classList.add('active');
-  row.setAttribute('aria-selected', 'true');
+  const id = Number(row.dataset.id);
+  const isMobile = window.matchMedia('(max-width: 900px)').matches;
 
-  selectedCompanyId = Number(row.dataset.id);
+  if (isMobile && selectedCompanyId === id) {
+    selectedCompanyId = null;
+  } else {
+    selectedCompanyId = id;
+  }
+
+  renderCompaniesTable();
   renderCompanyDetail(selectedCompanyId);
-  scrollToDetailOnMobile();
-}
 
-function scrollToDetailOnMobile() {
-  if (!window.matchMedia('(max-width: 900px)').matches) return;
-  const detail = document.getElementById('company-detail');
-  if (!detail) return;
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  detail.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
+  document.querySelector(`.company-row[data-id="${id}"]`)?.focus();
 }
 
 const companiesTbody = document.getElementById('companies-tbody');
@@ -365,17 +376,4 @@ if (profileBtn && profilePopover) {
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') closeProfilePopover();
   });
-}
-
-const controlsSection = document.getElementById('controls');
-const liveMetricsBar = document.getElementById('live-metrics-bar');
-
-if (controlsSection && liveMetricsBar && 'IntersectionObserver' in window) {
-  const controlsObserver = new IntersectionObserver(
-    (entries) => {
-      liveMetricsBar.hidden = !entries[0].isIntersecting;
-    },
-    { threshold: 0 }
-  );
-  controlsObserver.observe(controlsSection);
 }

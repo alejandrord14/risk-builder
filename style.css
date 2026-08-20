@@ -285,25 +285,24 @@ body {
 }
 
 .live-metrics-bar {
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 240px;
-  right: 0;
-  z-index: 45;
-  background: var(--white);
-  border-bottom: 1px solid #E1E4EA;
-}
-
-.live-metrics-bar-inner {
+  z-index: 5;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 10px;
-  padding: 10px 24px;
+  padding: 10px 20px;
+  margin-bottom: 24px;
+  background: var(--white);
+  border: 1px solid #E1E4EA;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(22, 33, 62, 0.06);
   font-size: 13px;
   color: var(--text-muted);
 }
 
-.live-metrics-bar-inner strong {
+.live-metrics-bar strong {
   color: var(--navy);
   font-weight: 700;
 }
@@ -698,6 +697,14 @@ body {
   overflow-wrap: break-word;
 }
 
+.expand-chevron {
+  display: none;
+}
+
+.companies-table tbody tr.company-detail-row {
+  display: none;
+}
+
 .badge-pill {
   display: inline-block;
   font-size: 12px;
@@ -820,20 +827,11 @@ body {
   }
 
   .detail-card {
-    position: static;
+    display: none;
   }
 
   .page-footer {
     left: 0;
-  }
-
-  .live-metrics-bar {
-    left: 0;
-  }
-
-  .live-metrics-bar-inner {
-    flex-wrap: wrap;
-    padding: 10px 16px;
   }
 
   .sidebar {
@@ -948,5 +946,54 @@ body {
     padding-bottom: 12px;
     font-size: 15px;
     text-align: right;
+  }
+
+  .expand-chevron {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-left: 8px;
+    margin-bottom: 2px;
+    vertical-align: middle;
+    border-right: 2px solid var(--text-muted);
+    border-bottom: 2px solid var(--text-muted);
+    transform: rotate(45deg);
+    transition: transform 0.15s ease;
+  }
+
+  .companies-table tbody tr.company-row.active .expand-chevron {
+    border-color: var(--teal);
+    transform: rotate(225deg);
+  }
+
+  .companies-table tbody tr.company-row.active {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  .companies-table tbody tr.company-detail-row {
+    display: block;
+    border: 1px solid rgba(23, 166, 115, 0.3);
+    border-top: none;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    margin-bottom: 10px;
+    background: rgba(23, 166, 115, 0.03);
+  }
+
+  .companies-table tbody tr.company-detail-row[hidden] {
+    display: none;
+  }
+
+  .companies-table tbody tr.company-detail-row td {
+    display: block;
+    padding: 16px;
+    border-bottom: none;
+  }
+
+  .companies-table tbody tr.company-detail-row td::before {
+    content: none;
   }
 }
