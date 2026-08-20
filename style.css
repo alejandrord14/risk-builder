@@ -511,16 +511,22 @@ body {
 /* Companies table */
 
 .companies {
-  padding-bottom: 64px;
+  padding-bottom: 120px;
 }
 
 .page-footer {
+  position: fixed;
+  left: 240px;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  background: var(--white);
   border-top: 1px solid #E1E4EA;
-  padding: 24px 0;
+  padding: 10px 0;
 }
 
 .page-footer p {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-muted);
 }
 
@@ -787,6 +793,10 @@ body {
 
   .detail-card {
     position: static;
+  }
+
+  .page-footer {
+    left: 0;
   }
 
   .sidebar {
