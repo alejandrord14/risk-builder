@@ -284,6 +284,34 @@ body {
   border-top: 1px solid #E1E4EA;
 }
 
+.live-metrics-bar {
+  position: fixed;
+  top: 0;
+  left: 240px;
+  right: 0;
+  z-index: 45;
+  background: var(--white);
+  border-bottom: 1px solid #E1E4EA;
+}
+
+.live-metrics-bar-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 24px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.live-metrics-bar-inner strong {
+  color: var(--navy);
+  font-weight: 700;
+}
+
+.live-metrics-divider {
+  color: #C7CCD8;
+}
+
 /* Intro */
 
 .intro {
@@ -797,6 +825,15 @@ body {
 
   .page-footer {
     left: 0;
+  }
+
+  .live-metrics-bar {
+    left: 0;
+  }
+
+  .live-metrics-bar-inner {
+    flex-wrap: wrap;
+    padding: 10px 16px;
   }
 
   .sidebar {

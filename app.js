@@ -230,6 +230,10 @@ function renderMetrics() {
   document.getElementById('metric-review-rate').textContent = formatPercent(metrics.reviewRate);
   document.getElementById('metric-reject-rate').textContent = formatPercent(metrics.rejectRate);
   document.getElementById('metric-avg-utilization').textContent = formatPercent(metrics.avgUtilization);
+
+  document.getElementById('live-metric-approval').textContent = formatPercent(metrics.approvalRate);
+  document.getElementById('live-metric-limit').textContent = formatCurrency(Math.round(metrics.totalLimit));
+  document.getElementById('live-metric-loss').textContent = formatCurrency(Math.round(metrics.expectedLoss));
 }
 
 function refreshFromRules() {
@@ -361,4 +365,17 @@ if (profileBtn && profilePopover) {
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') closeProfilePopover();
   });
+}
+
+const controlsSection = document.getElementById('controls');
+const liveMetricsBar = document.getElementById('live-metrics-bar');
+
+if (controlsSection && liveMetricsBar && 'IntersectionObserver' in window) {
+  const controlsObserver = new IntersectionObserver(
+    (entries) => {
+      liveMetricsBar.hidden = !entries[0].isIntersecting;
+    },
+    { threshold: 0 }
+  );
+  controlsObserver.observe(controlsSection);
 }
