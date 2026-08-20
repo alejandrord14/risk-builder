@@ -162,6 +162,15 @@ function selectCompanyRow(row) {
 
   selectedCompanyId = Number(row.dataset.id);
   renderCompanyDetail(selectedCompanyId);
+  scrollToDetailOnMobile();
+}
+
+function scrollToDetailOnMobile() {
+  if (!window.matchMedia('(max-width: 900px)').matches) return;
+  const detail = document.getElementById('company-detail');
+  if (!detail) return;
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  detail.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
 }
 
 const companiesTbody = document.getElementById('companies-tbody');
