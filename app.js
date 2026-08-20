@@ -129,10 +129,10 @@ function renderCompaniesTable() {
       tabindex="0"
       aria-selected="${c.id === selectedCompanyId}"
     >
-      <td class="company-name">${c.name}</td>
-      <td>${c.months_active} m</td>
-      <td>${c.utilization}%</td>
-      <td><span class="badge-pill ${statusBadgeClass(status)}">${STATUS_LABELS[status]}</span></td>
+      <td class="company-name" data-label="Empresa">${c.name}</td>
+      <td data-label="Antigüedad">${c.months_active} m</td>
+      <td data-label="Utilización">${c.utilization}%</td>
+      <td data-label="Estado"><span class="badge-pill ${statusBadgeClass(status)}">${STATUS_LABELS[status]}</span></td>
     </tr>
   `).join('');
 
@@ -280,4 +280,76 @@ if (navSections.length && sidebarNavLinks.length) {
     });
   });
   updateActiveNavLink();
+}
+
+const sidebar = document.getElementById('sidebar');
+const sidebarToggle = document.getElementById('sidebar-toggle');
+const sidebarClose = document.getElementById('sidebar-close');
+const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+function closeSidebar() {
+  if (!sidebar) return;
+  sidebar.classList.remove('open');
+  sidebarOverlay?.classList.remove('visible');
+  sidebarToggle?.setAttribute('aria-expanded', 'false');
+  document.body.classList.remove('nav-open');
+}
+
+function openSidebar() {
+  if (!sidebar) return;
+  sidebar.classList.add('open');
+  sidebarOverlay?.classList.add('visible');
+  sidebarToggle?.setAttribute('aria-expanded', 'true');
+  document.body.classList.add('nav-open');
+}
+
+if (sidebar && sidebarToggle) {
+  sidebarToggle.addEventListener('click', () => {
+    if (sidebar.classList.contains('open')) closeSidebar();
+    else openSidebar();
+  });
+
+  sidebarClose?.addEventListener('click', closeSidebar);
+  sidebarOverlay?.addEventListener('click', closeSidebar);
+
+  sidebarNavLinks.forEach((link) => {
+    link.addEventListener('click', closeSidebar);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeSidebar();
+  });
+}
+
+const profileBtn = document.getElementById('profile-btn');
+const profilePopover = document.getElementById('profile-popover');
+
+function closeProfilePopover() {
+  if (!profilePopover) return;
+  profilePopover.hidden = true;
+  profileBtn?.setAttribute('aria-expanded', 'false');
+}
+
+function openProfilePopover() {
+  if (!profilePopover) return;
+  profilePopover.hidden = false;
+  profileBtn?.setAttribute('aria-expanded', 'true');
+}
+
+if (profileBtn && profilePopover) {
+  profileBtn.addEventListener('click', (event) => {
+    event.stopPropagation();
+    if (profilePopover.hidden) openProfilePopover();
+    else closeProfilePopover();
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!profilePopover.hidden && !profilePopover.contains(event.target)) {
+      closeProfilePopover();
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeProfilePopover();
+  });
 }

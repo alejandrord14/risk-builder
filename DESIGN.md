@@ -139,7 +139,7 @@ Paleta de tres roles funcionales sobre una base neutra casi monocromática: inst
 
 ## Layout
 
-Layout de aplicación de dos zonas: un sidebar fijo de 240px (navy, `position: sticky`, altura completa de viewport) y un área principal fluida a la derecha. Dentro del área principal, una topbar de 72px (blanco, borde inferior de 1px) antecede al contenido scrolleable.
+Layout de aplicación de dos zonas: un sidebar de 240px (navy) y un área principal fluida a la derecha. Dentro del área principal, una topbar de 72px (blanco, borde inferior de 1px) antecede al contenido scrolleable.
 
 El contenido vive dentro de un `.container` con `max-width: 1100px` centrado y `24px` de padding lateral. Cada sección (`.controls`, `.metrics`, `.companies`) se apila verticalmente con `padding-bottom` generoso (24–64px) que crece con la importancia visual de la sección.
 
@@ -147,6 +147,11 @@ Los datos se organizan en grids explícitos, nunca en flujo libre:
 - Panel de reglas: grid de 2 columnas, `gap: 32px 40px` (colapsa a 1 columna bajo 640px).
 - Resultados: grid de 6 columnas, `gap: 20px` (colapsa a 3 columnas bajo 1100px, 2 columnas bajo 640px).
 - Cartera + detalle: grid `3fr 2fr`, `gap: 24px` (colapsa a 1 columna apilada bajo 900px). El panel de detalle es `position: sticky` (`top: 24px`) mientras las dos columnas están lado a lado, para que no quede un hueco vacío bajo un panel corto junto a una tabla larga; se vuelve estático (`position: static`) en el breakpoint apilado, donde ya no comparte alto con la tabla.
+
+### Responsive: sidebar → menú hamburguesa (bajo 900px)
+En desktop el sidebar es `position: sticky`, siempre visible — no colapsa nunca, ni con clic ni con ancho de pantalla, porque refuerza la filosofía "Control Room" (todo visible a la vez, sin estados ocultos) y en desktop 240px nunca es un ancho apretado.
+
+Bajo 900px el sidebar pasa a `position: fixed` fuera de flujo, oculto por defecto (`transform: translateX(-100%)`, transición de 0.25s) y se revela como drawer de ancho completo (`.sidebar.open`) sobre un overlay semitransparente (`rgba(22, 33, 62, 0.4)`) que cierra el menú al hacer clic. Se abre con un botón hamburguesa (`.hamburger-btn`, tres barras navy, 40×40px) que aparece a la izquierda de la topbar junto a una marca compacta (`.mobile-brand`: mismo `.logo-mark` teal + "Risk Builder" en navy, ya que la topbar es blanca) — el sidebar completo, con su propio logo, deja de estar visible bajo este breakpoint. El drawer suma su propio botón de cierre (×) junto al logo. Cierra con: overlay, botón ×, Escape, o al elegir un link de navegación. Mientras está abierto, `body` recibe `overflow: hidden` para evitar el scroll del fondo.
 
 ### Named Rules
 **The Grid-Not-Flow Rule.** Cualquier colección de datos relacionados (reglas, métricas, empresas) vive en un grid con columnas explícitas y un breakpoint de colapso definido — nunca en un flujo de texto libre.
@@ -207,7 +212,12 @@ No hay bordes decorativos: el único borde real es la línea divisoria de 1px (`
 ### Table (Cartera sintética)
 - **Header:** fondo `bg`, texto `label` (12px/600, uppercase, letter-spacing 0.03em, color `text-muted`), borde inferior de 1px.
 - **Rows:** borde inferior de 1px (`#F0F1F4`, una variante aún más tenue del borde estándar); filas interactivas (`company-row`) muestran cursor pointer y un fondo teal-tint al 4% en hover, 12% cuando están seleccionadas — con el nombre de la empresa cambiando a teal en la fila activa.
-- **Columnas:** `table-layout: fixed` con anchos fijos por `colgroup` (Empresa 32%, Antigüedad 23%, Utilización 22%, Estado 23%), calibrados para que ningún encabezado ni badge de estado necesite envolverse y quepan sin scroll horizontal en el ancho de tarjeta típico (~617px). La columna Empresa es la única que envuelve a dos líneas cuando el nombre es largo — nunca se trunca ni obliga a desplazar la tabla. Si se agrega o quita una columna, hay que recalcular estos porcentajes.
+- **Columnas (desktop, sobre 900px):** `table-layout: fixed` con anchos fijos por `colgroup` (Empresa 32%, Antigüedad 23%, Utilización 22%, Estado 23%), calibrados para que ningún encabezado ni badge de estado necesite envolverse y quepan sin scroll horizontal en el ancho de tarjeta típico (~617px). La columna Empresa es la única que envuelve a dos líneas cuando el nombre es largo — nunca se trunca ni obliga a desplazar la tabla. Si se agrega o quita una columna, hay que recalcular estos porcentajes.
+- **Mobile (bajo 900px):** la tabla deja de ser tabla visualmente — `thead` se oculta, cada `tr.company-row` se convierte en una tarjeta con borde (radio `12px`), y cada `td` pasa a ser una fila `label: valor` usando `content: attr(data-label)` para reponer el encabezado perdido. Mismo patrón que resolvió el scroll horizontal en desktop (nunca truncar, nunca forzar scroll), solo que aquí el problema es ancho de viewport en vez de ancho de columna.
+
+### Topbar Controls
+- **Idioma:** la app es español-only; `.lang-label` es texto plano (`text-muted`, 13px/600) sin chrome de botón — nunca simular un control interactivo para una opción que no existe.
+- **Perfil (`.profile-popover`):** al hacer clic en el avatar se abre una tarjeta `card`-like (radio `16px`, `card-ambient` shadow, `280px` de ancho) anclada bajo el avatar (`position: absolute`, `right: 0`). Contenido: avatar grande + rol genérico + una nota explícita de que Risk Builder no tiene autenticación real — informativo, nunca un menú de cuenta que implique login/logout que no existen. Cierra con clic afuera, Escape, o clic de nuevo en el avatar.
 
 ### Metric / Stat Tile (Resultados, highlights del detalle)
 - **Style:** las tarjetas de métrica son `card` estándar con `padding: 24px`; el label va arriba en `text-muted` 13px, el valor abajo en navy 26px/700. Los highlights dentro del panel de detalle (línea recomendada, confianza) usan la misma jerarquía pero en miniatura, sobre un fondo `bg` en vez de blanco, para diferenciarlos visualmente de una tarjeta de primer nivel.

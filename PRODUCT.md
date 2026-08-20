@@ -32,7 +32,8 @@ Flujo típico: un usuario ajusta uno o más de los 6 controles del panel de regl
 - Cartera de 30 empresas sintéticas generadas de forma determinística (semilla fija) para que los resultados sean comparables entre sesiones — nunca datos reales de Clara. Esto es una decisión durable: la herramienta se queda siempre con datos sintéticos, no se conectará a datos reales o anonimizados de la cartera de Clara.
 - Sin backend ni persistencia: todo el cálculo ocurre en el navegador: recargar la página resetea cualquier ajuste a los valores por defecto.
 - Sin acción de "publicar" o "exportar" reglas: es intencionalmente un sandbox de solo exploración/decisión, no un punto de despliegue a producción.
-- Selectores de idioma (ES/EN) y perfil en la topbar existen visualmente pero aún no tienen funcionalidad real.
+- La herramienta es español-only: el selector ES/EN se retiró (nunca hubo build de inglés) y quedó una etiqueta "ES" estática, no interactiva. El ícono de perfil abre un popover informativo (rol genérico + aclaración de que no hay cuentas ni autenticación real) — no es un login ni un menú de cuenta funcional.
+- Responsive: por debajo de 900px el sidebar se convierte en un menú hamburguesa (drawer deslizable con overlay); la tabla de cartera pasa de columnas fijas a tarjetas apiladas por empresa. En desktop el sidebar permanece siempre visible, sin colapsar.
 
 ## Brand Commitments
 
