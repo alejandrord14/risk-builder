@@ -453,8 +453,8 @@ body {
 .companies-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
   font-size: 13px;
-  white-space: nowrap;
 }
 
 .companies-table td {
@@ -537,6 +537,7 @@ body {
 .company-name {
   font-weight: 600;
   color: var(--navy);
+  overflow-wrap: break-word;
 }
 
 .badge-pill {

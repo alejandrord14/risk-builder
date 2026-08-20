@@ -207,6 +207,7 @@ No hay bordes decorativos: el único borde real es la línea divisoria de 1px (`
 ### Table (Cartera sintética)
 - **Header:** fondo `bg`, texto `label` (12px/600, uppercase, letter-spacing 0.03em, color `text-muted`), borde inferior de 1px.
 - **Rows:** borde inferior de 1px (`#F0F1F4`, una variante aún más tenue del borde estándar); filas interactivas (`company-row`) muestran cursor pointer y un fondo teal-tint al 4% en hover, 12% cuando están seleccionadas — con el nombre de la empresa cambiando a teal en la fila activa.
+- **Columnas:** `table-layout: fixed` con anchos fijos por `colgroup` (Empresa 32%, Antigüedad 23%, Utilización 22%, Estado 23%), calibrados para que ningún encabezado ni badge de estado necesite envolverse y quepan sin scroll horizontal en el ancho de tarjeta típico (~617px). La columna Empresa es la única que envuelve a dos líneas cuando el nombre es largo — nunca se trunca ni obliga a desplazar la tabla. Si se agrega o quita una columna, hay que recalcular estos porcentajes.
 
 ### Metric / Stat Tile (Resultados, highlights del detalle)
 - **Style:** las tarjetas de métrica son `card` estándar con `padding: 24px`; el label va arriba en `text-muted` 13px, el valor abajo en navy 26px/700. Los highlights dentro del panel de detalle (línea recomendada, confianza) usan la misma jerarquía pero en miniatura, sobre un fondo `bg` en vez de blanco, para diferenciarlos visualmente de una tarjeta de primer nivel.
