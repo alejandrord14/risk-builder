@@ -514,6 +514,16 @@ body {
   padding-bottom: 64px;
 }
 
+.page-footer {
+  border-top: 1px solid #E1E4EA;
+  padding: 24px 0;
+}
+
+.page-footer p {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
 .companies-layout {
   display: grid;
   grid-template-columns: 3fr 2fr;

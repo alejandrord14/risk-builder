@@ -39,6 +39,7 @@ Flujo típico: un usuario ajusta uno o más de los 6 controles del panel de regl
 
 - Nombre del producto: "Risk Builder".
 - Paleta de marca: navy `#16213E`, teal `#17A673`, fondo `#F7F8FA`, tarjetas blancas redondeadas.
+- Favicon (`favicon.svg` + `favicon.png` de respaldo) e imagen Open Graph (`og-image.png`, 1200×630) generados a partir de estos mismos tokens: la marca "RB" en teal/navy es la única identidad visual, no hay logo de Clara en ningún asset.
 
 ## Evidence on Hand
 
